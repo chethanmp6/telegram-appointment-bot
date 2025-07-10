@@ -1,0 +1,276 @@
+name: Deploy Appointment Bot
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - staging
+        - prod
+      cloud_provider:
+        description: 'Cloud provider'
+        required: true
+        default: 'aws'
+        type: choice
+        options:
+        - aws
+        - gcp
+        - azure
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.11]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-asyncio pytest-cov
+
+    - name: Run linting
+      run: |
+        pip install black flake8 mypy
+        black --check app/
+        flake8 app/
+        mypy app/ --ignore-missing-imports
+
+    - name: Run tests
+      run: |
+        pytest app/tests/ -v --cov=app --cov-report=xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.image.outputs.image }}
+      digest: ${{ steps.build.outputs.digest }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push Docker image
+      id: build
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Output image
+      id: image
+      run: |
+        echo "image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
+
+  deploy-aws:
+    if: github.ref == 'refs/heads/main' && (github.event.inputs.cloud_provider == 'aws' || github.event.inputs.cloud_provider == '')
+    needs: build
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ github.event.inputs.environment || 'prod' }}
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+    - name: Deploy to AWS
+      id: deploy
+      run: |
+        chmod +x deployment/aws/deploy.sh
+        deployment/aws/deploy.sh ${{ github.event.inputs.environment || 'prod' }}
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+
+    - name: Update deployment status
+      run: |
+        echo "Deployed to AWS ECS"
+        echo "Environment: ${{ github.event.inputs.environment || 'prod' }}"
+
+  deploy-gcp:
+    if: github.ref == 'refs/heads/main' && github.event.inputs.cloud_provider == 'gcp'
+    needs: build
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ github.event.inputs.environment || 'prod' }}
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Deploy to GCP
+      id: deploy
+      run: |
+        chmod +x deployment/gcp/deploy.sh
+        deployment/gcp/deploy.sh ${{ github.event.inputs.environment || 'prod' }} ${{ vars.GCP_PROJECT_ID }}
+      env:
+        REGION: ${{ vars.GCP_REGION || 'us-central1' }}
+
+    - name: Update deployment status
+      run: |
+        echo "Deployed to Google Cloud Run"
+        echo "Environment: ${{ github.event.inputs.environment || 'prod' }}"
+
+  deploy-azure:
+    if: github.ref == 'refs/heads/main' && github.event.inputs.cloud_provider == 'azure'
+    needs: build
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ github.event.inputs.environment || 'prod' }}
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy to Azure
+      id: deploy
+      run: |
+        chmod +x deployment/azure/deploy.sh
+        deployment/azure/deploy.sh ${{ github.event.inputs.environment || 'prod' }}
+      env:
+        RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+        LOCATION: ${{ vars.AZURE_LOCATION || 'East US' }}
+
+    - name: Update deployment status
+      run: |
+        echo "Deployed to Azure Container Instances"
+        echo "Environment: ${{ github.event.inputs.environment || 'prod' }}"
+
+  security-scan:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ needs.build.outputs.image }}
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  notify:
+    needs: [deploy-aws, deploy-gcp, deploy-azure]
+    if: always()
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Notify Slack on success
+      if: needs.deploy-aws.result == 'success' || needs.deploy-gcp.result == 'success' || needs.deploy-azure.result == 'success'
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        channel: '#deployments'
+        message: |
+          ✅ Appointment Bot deployed successfully!
+          Environment: ${{ github.event.inputs.environment || 'prod' }}
+          Provider: ${{ github.event.inputs.cloud_provider || 'aws' }}
+          Commit: ${{ github.sha }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Notify Slack on failure
+      if: needs.deploy-aws.result == 'failure' || needs.deploy-gcp.result == 'failure' || needs.deploy-azure.result == 'failure'
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#deployments'
+        message: |
+          ❌ Appointment Bot deployment failed!
+          Environment: ${{ github.event.inputs.environment || 'prod' }}
+          Provider: ${{ github.event.inputs.cloud_provider || 'aws' }}
+          Commit: ${{ github.sha }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

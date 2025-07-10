@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # Application
+  app:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/appointment-bot:${IMAGE_TAG:-latest}
+    container_name: appointment_app
+    environment:
+      # Database connections (RDS)
+      POSTGRES_HOST: ${RDS_ENDPOINT}
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${RDS_USERNAME}
+      POSTGRES_PASSWORD: ${RDS_PASSWORD}
+      POSTGRES_DATABASE: appointment_bot
+      
+      # Neo4j (AuraDB or EC2)
+      NEO4J_URI: ${NEO4J_URI}
+      NEO4J_USER: ${NEO4J_USERNAME}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD}
+      
+      # Redis (ElastiCache)
+      REDIS_HOST: ${ELASTICACHE_ENDPOINT}
+      REDIS_PORT: 6379
+      
+      # Vector database
+      VECTOR_DB_PROVIDER: pinecone
+      PINECONE_API_KEY: ${PINECONE_API_KEY}
+      PINECONE_ENVIRONMENT: ${PINECONE_ENVIRONMENT}
+      PINECONE_INDEX_NAME: appointment-bot-prod
+      
+      # LLM settings
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      LLM_PROVIDER: openai
+      
+      # Telegram bot
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_WEBHOOK_URL: https://${DOMAIN_NAME}/webhook/${TELEGRAM_WEBHOOK_SECRET}
+      TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET}
+      
+      # Application settings
+      DEBUG: false
+      LOG_LEVEL: INFO
+      SECRET_KEY: ${SECRET_KEY}
+      
+      # Business settings
+      BUSINESS_NAME: ${BUSINESS_NAME}
+      BUSINESS_TIMEZONE: ${BUSINESS_TIMEZONE}
+      
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: /aws/ecs/appointment-bot
+        awslogs-region: ${AWS_REGION}
+        awslogs-stream-prefix: app
+
+  # Celery Worker
+  celery_worker:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/appointment-bot:${IMAGE_TAG:-latest}
+    command: celery -A app.core.celery worker --loglevel=info
+    environment:
+      # Same environment as app
+      POSTGRES_HOST: ${RDS_ENDPOINT}
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${RDS_USERNAME}
+      POSTGRES_PASSWORD: ${RDS_PASSWORD}
+      POSTGRES_DATABASE: appointment_bot
+      
+      NEO4J_URI: ${NEO4J_URI}
+      NEO4J_USER: ${NEO4J_USERNAME}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD}
+      
+      REDIS_HOST: ${ELASTICACHE_ENDPOINT}
+      REDIS_PORT: 6379
+      
+      CELERY_BROKER_URL: redis://${ELASTICACHE_ENDPOINT}:6379/0
+      CELERY_RESULT_BACKEND: redis://${ELASTICACHE_ENDPOINT}:6379/0
+      
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: /aws/ecs/appointment-bot
+        awslogs-region: ${AWS_REGION}
+        awslogs-stream-prefix: celery

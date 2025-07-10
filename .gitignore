@@ -1,0 +1,161 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Secret files
+.env
+.env.local
+.env.production
+.env.staging
+credentials.json
+token.json
+*-key.json
+*-credentials.json
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Data directories
+data/
+uploads/
+downloads/
+
+# Docker
+.dockerignore
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+terraform.tfvars.json
+
+# Cloud provider specific
+.aws/
+.gcloud/
+.azure/
+
+# Kubernetes secrets (example files are OK, but not real secrets)
+deployment/kubernetes/secrets-real.yml
+
+# Neo4j
+neo4j_data/
+neo4j_logs/
+neo4j_conf/
+
+# Redis
+redis_data/
+
+# PostgreSQL
+postgres_data/
+
+# ChromaDB
+chromadb_data/
+
+# Vector databases
+*.index
+embeddings/
+chroma/
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# Local configuration
+local_config.yml
+local_settings.py

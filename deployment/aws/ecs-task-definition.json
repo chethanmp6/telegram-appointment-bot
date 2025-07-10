@@ -1,0 +1,152 @@
+{
+  "family": "appointment-bot",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "appointment-app",
+      "image": "ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/appointment-bot:latest",
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "DEBUG",
+          "value": "false"
+        },
+        {
+          "name": "LOG_LEVEL",
+          "value": "INFO"
+        },
+        {
+          "name": "VECTOR_DB_PROVIDER",
+          "value": "pinecone"
+        },
+        {
+          "name": "LLM_PROVIDER",
+          "value": "openai"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "POSTGRES_HOST",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/postgres/host"
+        },
+        {
+          "name": "POSTGRES_PASSWORD",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/postgres/password"
+        },
+        {
+          "name": "NEO4J_URI",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/neo4j/uri"
+        },
+        {
+          "name": "NEO4J_PASSWORD",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/neo4j/password"
+        },
+        {
+          "name": "REDIS_HOST",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/redis/host"
+        },
+        {
+          "name": "OPENAI_API_KEY",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/openai/api-key"
+        },
+        {
+          "name": "TELEGRAM_BOT_TOKEN",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/telegram/bot-token"
+        },
+        {
+          "name": "SECRET_KEY",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/secret-key"
+        },
+        {
+          "name": "PINECONE_API_KEY",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/pinecone/api-key"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/aws/ecs/appointment-bot",
+          "awslogs-region": "REGION",
+          "awslogs-stream-prefix": "app"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:8000/health || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      },
+      "essential": true
+    },
+    {
+      "name": "celery-worker",
+      "image": "ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/appointment-bot:latest",
+      "command": [
+        "celery",
+        "-A",
+        "app.core.celery",
+        "worker",
+        "--loglevel=info"
+      ],
+      "environment": [
+        {
+          "name": "DEBUG",
+          "value": "false"
+        },
+        {
+          "name": "LOG_LEVEL",
+          "value": "INFO"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "POSTGRES_HOST",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/postgres/host"
+        },
+        {
+          "name": "POSTGRES_PASSWORD",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/postgres/password"
+        },
+        {
+          "name": "NEO4J_URI",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/neo4j/uri"
+        },
+        {
+          "name": "NEO4J_PASSWORD",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/neo4j/password"
+        },
+        {
+          "name": "REDIS_HOST",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/redis/host"
+        },
+        {
+          "name": "OPENAI_API_KEY",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/appointment-bot/openai/api-key"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/aws/ecs/appointment-bot",
+          "awslogs-region": "REGION",
+          "awslogs-stream-prefix": "celery"
+        }
+      },
+      "essential": false
+    }
+  ]
+}

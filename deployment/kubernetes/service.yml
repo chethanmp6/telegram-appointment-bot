@@ -1,0 +1,99 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: appointment-bot-service
+  namespace: appointment-bot
+  labels:
+    app: appointment-bot
+    component: app
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: appointment-bot
+    component: app
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flower-service
+  namespace: appointment-bot
+  labels:
+    app: appointment-bot
+    component: flower
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5555
+    targetPort: 5555
+    protocol: TCP
+    name: flower
+  selector:
+    app: appointment-bot
+    component: flower
+
+---
+# PostgreSQL Service (if running in cluster)
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: appointment-bot
+  labels:
+    app: postgres
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+    name: postgres
+  selector:
+    app: postgres
+
+---
+# Neo4j Service (if running in cluster)
+apiVersion: v1
+kind: Service
+metadata:
+  name: neo4j-service
+  namespace: appointment-bot
+  labels:
+    app: neo4j
+spec:
+  type: ClusterIP
+  ports:
+  - port: 7687
+    targetPort: 7687
+    protocol: TCP
+    name: bolt
+  - port: 7474
+    targetPort: 7474
+    protocol: TCP
+    name: http
+  selector:
+    app: neo4j
+
+---
+# Redis Service (if running in cluster)
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: appointment-bot
+  labels:
+    app: redis
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6379
+    targetPort: 6379
+    protocol: TCP
+    name: redis
+  selector:
+    app: redis

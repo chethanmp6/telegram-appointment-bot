@@ -1,0 +1,79 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/${PROJECT_ID}/appointment-bot:${BUILD_ID}', '-f', 'Dockerfile', '.']
+    
+  # Push the image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/${PROJECT_ID}/appointment-bot:${BUILD_ID}']
+    
+  # Tag as latest
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['tag', 'gcr.io/${PROJECT_ID}/appointment-bot:${BUILD_ID}', 'gcr.io/${PROJECT_ID}/appointment-bot:latest']
+    
+  # Push latest tag
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/${PROJECT_ID}/appointment-bot:latest']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'appointment-bot'
+      - '--image=gcr.io/${PROJECT_ID}/appointment-bot:${BUILD_ID}'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--memory=2Gi'
+      - '--cpu=2'
+      - '--max-instances=10'
+      - '--min-instances=1'
+      - '--port=8000'
+      - '--set-env-vars=DEBUG=false,LOG_LEVEL=INFO,VECTOR_DB_PROVIDER=pinecone'
+      - '--set-secrets=POSTGRES_HOST=postgres-host:latest,POSTGRES_PASSWORD=postgres-password:latest,NEO4J_URI=neo4j-uri:latest,NEO4J_PASSWORD=neo4j-password:latest,OPENAI_API_KEY=openai-api-key:latest,TELEGRAM_BOT_TOKEN=telegram-bot-token:latest,SECRET_KEY=secret-key:latest'
+      - '--vpc-connector=${_VPC_CONNECTOR}'
+      - '--vpc-egress=private-ranges-only'
+
+  # Deploy Celery worker to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'appointment-bot-worker'
+      - '--image=gcr.io/${PROJECT_ID}/appointment-bot:${BUILD_ID}'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--no-allow-unauthenticated'
+      - '--memory=1Gi'
+      - '--cpu=1'
+      - '--max-instances=5'
+      - '--min-instances=1'
+      - '--args=celery,-A,app.core.celery,worker,--loglevel=info'
+      - '--set-env-vars=DEBUG=false,LOG_LEVEL=INFO'
+      - '--set-secrets=POSTGRES_HOST=postgres-host:latest,POSTGRES_PASSWORD=postgres-password:latest,NEO4J_URI=neo4j-uri:latest,NEO4J_PASSWORD=neo4j-password:latest,OPENAI_API_KEY=openai-api-key:latest,REDIS_HOST=redis-host:latest'
+      - '--vpc-connector=${_VPC_CONNECTOR}'
+      - '--vpc-egress=private-ranges-only'
+
+  # Update Telegram webhook
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        SERVICE_URL=$(gcloud run services describe appointment-bot --region=${_REGION} --format='value(status.url)')
+        WEBHOOK_SECRET=$(gcloud secrets versions access latest --secret="telegram-webhook-secret")
+        BOT_TOKEN=$(gcloud secrets versions access latest --secret="telegram-bot-token")
+        curl -X POST "https://api.telegram.org/bot$${BOT_TOKEN}/setWebhook" \
+          -H "Content-Type: application/json" \
+          -d "{\"url\": \"$${SERVICE_URL}/webhook/$${WEBHOOK_SECRET}\"}"
+
+substitutions:
+  _REGION: 'us-central1'
+  _VPC_CONNECTOR: 'appointment-bot-connector'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_HIGHCPU_8'
+
+timeout: '1200s'
