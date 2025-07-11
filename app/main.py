@@ -204,7 +204,7 @@ async def health_check():
         
         # Check services
         llm_healthy = hasattr(app.state, 'llm_service') and app.state.llm_service.is_healthy()
-        rag_healthy = hasattr(app.state, 'rag_service') and app.state.rag_service.is_healthy()
+        rag_healthy = hasattr(app.state, 'rag_service') and await app.state.rag_service.health_check()
         telegram_healthy = hasattr(app.state, 'telegram_service') and app.state.telegram_service.is_healthy()
         
         return HealthCheck(

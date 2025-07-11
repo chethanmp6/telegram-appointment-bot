@@ -624,10 +624,16 @@ class RAGService:
     
     def is_healthy(self) -> bool:
         """Check if RAG service is healthy."""
-        return self._healthy and (
-            self.vector_store and 
-            asyncio.run(self.vector_store.health_check())
-        )
+        return self._healthy and self.vector_store is not None
+    
+    async def health_check(self) -> bool:
+        """Async health check for RAG service."""
+        try:
+            if not self._healthy or not self.vector_store:
+                return False
+            return await self.vector_store.health_check()
+        except Exception:
+            return False
     
     async def close(self):
         """Close RAG service."""

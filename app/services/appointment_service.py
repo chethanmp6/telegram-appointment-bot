@@ -1,6 +1,7 @@
 """Appointment management service with multi-database coordination."""
 
 import asyncio
+import json
 import logging
 from typing import Dict, List, Any, Optional
 from datetime import datetime, date, time, timedelta
@@ -65,7 +66,7 @@ class AppointmentService:
                         "name": customer.name,
                         "phone": customer.phone,
                         "email": customer.email,
-                        "preferences": customer.preferences,
+                        "preferences": json.dumps(customer.preferences) if customer.preferences else "{}",
                         "created_at": customer.created_at.isoformat(),
                         "updated_at": customer.updated_at.isoformat()
                     })
