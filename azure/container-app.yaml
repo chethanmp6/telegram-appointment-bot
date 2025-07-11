@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointment-bot
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: appointment-bot
+  template:
+    metadata:
+      labels:
+        app: appointment-bot
+    spec:
+      containers:
+      - name: appointment-bot
+        image: appointmentbotacr.azurecr.io/appointment-bot:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: POSTGRES_HOST
+          valueFrom:
+            secretKeyRef:
+              name: appointment-secrets
+              key: postgres-host
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: appointment-secrets
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: appointment-secrets
+              key: postgres-password
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: appointment-secrets
+              key: postgres-db
+        - name: NEO4J_URI
+          valueFrom:
+            secretKeyRef:
+              name: appointment-secrets
+              key: neo4j-uri
+        - name: NEO4J_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: appointment-secrets
+              key: neo4j-username
+        - name: NEO4J_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: appointment-secrets
+              key: neo4j-password
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: appointment-secrets
+              key: openai-api-key
+        - name: TELEGRAM_BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: appointment-secrets
+              key: telegram-bot-token
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: appointment-secrets
+              key: redis-url
+        - name: VECTOR_DB_PROVIDER
+          value: "pinecone"
+        - name: PINECONE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: appointment-secrets
+              key: pinecone-api-key
+        - name: ENVIRONMENT
+          value: "production"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appointment-bot-service
+spec:
+  selector:
+    app: appointment-bot
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: LoadBalancer

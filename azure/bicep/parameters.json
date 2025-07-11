@@ -1,0 +1,57 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "East US"
+    },
+    "containerAppEnvironmentName": {
+      "value": "appointment-bot-env"
+    },
+    "containerAppName": {
+      "value": "appointment-bot"
+    },
+    "containerRegistryName": {
+      "value": "appointmentbotacr"
+    },
+    "postgresServerName": {
+      "value": "appointment-postgres"
+    },
+    "keyVaultName": {
+      "value": "appointment-kv"
+    },
+    "logAnalyticsWorkspaceName": {
+      "value": "appointment-logs"
+    },
+    "appInsightsName": {
+      "value": "appointment-insights"
+    },
+    "redisCacheName": {
+      "value": "appointment-redis"
+    },
+    "postgresAdminUsername": {
+      "value": "appointmentadmin"
+    },
+    "postgresAdminPassword": {
+      "value": "YourSecurePassword123!"
+    },
+    "telegramBotToken": {
+      "value": "YOUR_TELEGRAM_BOT_TOKEN"
+    },
+    "openaiApiKey": {
+      "value": "YOUR_OPENAI_API_KEY"
+    },
+    "neo4jUri": {
+      "value": "neo4j+s://YOUR_NEO4J_URI"
+    },
+    "neo4jUsername": {
+      "value": "neo4j"
+    },
+    "neo4jPassword": {
+      "value": "YOUR_NEO4J_PASSWORD"
+    },
+    "pineconeApiKey": {
+      "value": "YOUR_PINECONE_API_KEY"
+    }
+  }
+}
