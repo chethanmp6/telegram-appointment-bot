@@ -81,7 +81,7 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     anthropic_api_key: str = ""
     llm_provider: str = "openai"  # "openai" or "anthropic"
-    llm_model: str = "gpt-4-turbo-preview"
+    llm_model: str = "gpt-4.1-nano"
     llm_temperature: float = 0.7
     llm_max_tokens: int = 1000
     

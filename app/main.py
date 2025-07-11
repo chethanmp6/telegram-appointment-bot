@@ -3,7 +3,9 @@
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from contextlib import asynccontextmanager
 import asyncio
 import logging
@@ -13,7 +15,7 @@ import time
 from app.core.config import settings, app_config
 from app.core.database import create_tables, check_database_health
 from app.core.graph_db import init_graph_database, close_graph_database, graph_db
-from app.api import appointments, telegram, knowledge, graph
+from app.api import appointments, telegram, knowledge, graph, chat
 from app.services.llm_service import LLMService
 from app.services.rag_service import RAGService
 from app.services.telegram_service import TelegramService
@@ -137,6 +139,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Mount static files and templates
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+templates = Jinja2Templates(directory="app/templates")
+
 # Add middleware
 app.add_middleware(
     CORSMiddleware,
@@ -227,16 +233,22 @@ async def health_check():
         )
 
 
-# Root endpoint
-@app.get("/")
-async def root():
-    """Root endpoint."""
+# Web Client Routes
+@app.get("/", response_class=HTMLResponse)
+async def web_client(request: Request):
+    """Serve the web client interface."""
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/api", response_class=JSONResponse)
+async def api_root():
+    """API root endpoint."""
     return {
         "message": "Telegram Appointment Booking Bot API",
         "version": "1.0.0",
         "status": "running",
         "docs": "/docs",
-        "health": "/health"
+        "health": "/health",
+        "webclient": "/"
     }
 
 
@@ -263,6 +275,12 @@ app.include_router(
     graph.router,
     prefix="/api/v1/graph",
     tags=["graph"]
+)
+
+app.include_router(
+    chat.router,
+    prefix="/api/v1/chat",
+    tags=["chat"]
 )
 
 

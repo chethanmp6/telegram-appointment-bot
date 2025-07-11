@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Manager - Web Client</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calendar-check"></i>
+                    <h1>Appointment Manager</h1>
+                </div>
+                <div class="status-indicator">
+                    <span id="connectionStatus" class="status-dot offline"></span>
+                    <span id="statusText">Connecting...</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h2>Book Your Appointment</h2>
+                    <p>Chat with our AI assistant to schedule your appointment</p>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>Hello! I'm your appointment booking assistant. I can help you schedule appointments, check availability, and answer questions about our services.</p>
+                            <p>How can I help you today?</p>
+                        </div>
+                        <div class="message-time">
+                            <span id="initialTime"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <form id="chatForm" class="chat-form">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                id="messageInput" 
+                                placeholder="Type your message here..." 
+                                autocomplete="off"
+                                maxlength="500"
+                            >
+                            <button type="submit" id="sendButton" class="send-button">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="quick-actions">
+                        <button class="quick-action" onclick="sendQuickMessage('I want to book an appointment')">
+                            <i class="fas fa-calendar-plus"></i>
+                            Book Appointment
+                        </button>
+                        <button class="quick-action" onclick="sendQuickMessage('What services do you offer?')">
+                            <i class="fas fa-list"></i>
+                            View Services
+                        </button>
+                        <button class="quick-action" onclick="sendQuickMessage('Check availability for today')">
+                            <i class="fas fa-clock"></i>
+                            Check Availability
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="info-card">
+                    <h3><i class="fas fa-info-circle"></i> How it works</h3>
+                    <ol>
+                        <li>Tell me what service you need</li>
+                        <li>Choose your preferred date and time</li>
+                        <li>Provide your contact information</li>
+                        <li>Confirm your appointment</li>
+                    </ol>
+                </div>
+
+                <div class="info-card">
+                    <h3><i class="fas fa-phone"></i> Contact Info</h3>
+                    <p><strong>Business Hours:</strong><br>
+                    Mon-Fri: 9:00 AM - 6:00 PM<br>
+                    Sat: 10:00 AM - 4:00 PM<br>
+                    Sun: Closed</p>
+                    <p><strong>Phone:</strong> (555) 123-4567</p>
+                    <p><strong>Email:</strong> info@appointmentmanager.com</p>
+                </div>
+
+                <div class="info-card">
+                    <h3><i class="fas fa-calendar-alt"></i> Quick Stats</h3>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="totalAppointments">-</span>
+                            <span class="stat-label">Total Appointments</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="availableSlots">-</span>
+                            <span class="stat-label">Available Today</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Processing your request...</p>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
