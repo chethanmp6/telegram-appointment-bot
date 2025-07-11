@@ -1,0 +1,296 @@
+{
+  "spa_services": [
+    {
+      "id": "massage-001",
+      "category": "Massage Therapy",
+      "title": "Swedish Massage",
+      "description": "A classic full-body massage that promotes relaxation and improves circulation. Uses long, flowing strokes to release tension and stress.",
+      "duration": "60-90 minutes",
+      "price": "$120-180",
+      "benefits": ["Stress reduction", "Improved circulation", "Muscle relaxation", "Better sleep quality"],
+      "preparation": "Arrive 15 minutes early. Avoid heavy meals 2 hours before treatment. Stay hydrated.",
+      "contraindications": ["Recent surgery", "Severe inflammation", "Certain skin conditions"]
+    },
+    {
+      "id": "massage-002",
+      "category": "Massage Therapy",
+      "title": "Deep Tissue Massage",
+      "description": "Therapeutic massage targeting deeper muscle layers and connective tissue. Ideal for chronic pain, muscle knots, and tension.",
+      "duration": "60-90 minutes",
+      "price": "$140-200",
+      "benefits": ["Pain relief", "Muscle knot removal", "Improved mobility", "Chronic tension relief"],
+      "preparation": "Drink plenty of water before and after. Communicate pain levels during treatment.",
+      "contraindications": ["Blood clots", "Recent injuries", "Certain medications"]
+    },
+    {
+      "id": "massage-003",
+      "category": "Massage Therapy",
+      "title": "Hot Stone Massage",
+      "description": "Relaxing massage using heated basalt stones to warm muscles and enhance the therapeutic experience.",
+      "duration": "90 minutes",
+      "price": "$180-220",
+      "benefits": ["Deep relaxation", "Improved circulation", "Stress relief", "Muscle tension release"],
+      "preparation": "Inform therapist of heat sensitivity. Avoid alcohol before treatment.",
+      "contraindications": ["Pregnancy", "Diabetes", "High blood pressure", "Heart conditions"]
+    },
+    {
+      "id": "facial-001",
+      "category": "Facial Treatments",
+      "title": "Signature Hydrating Facial",
+      "description": "Customized facial treatment designed to cleanse, exfoliate, and hydrate your skin for a radiant glow.",
+      "duration": "60 minutes",
+      "price": "$100-140",
+      "benefits": ["Deep cleansing", "Hydration", "Improved skin texture", "Stress relief"],
+      "preparation": "Avoid sun exposure 24 hours before. Remove makeup and contact lenses.",
+      "contraindications": ["Active acne treatment", "Recent chemical peels", "Sunburn"]
+    },
+    {
+      "id": "facial-002",
+      "category": "Facial Treatments",
+      "title": "Anti-Aging Facial",
+      "description": "Advanced facial treatment targeting signs of aging with specialized serums and techniques.",
+      "duration": "75 minutes",
+      "price": "$150-200",
+      "benefits": ["Reduced fine lines", "Improved skin elasticity", "Brighter complexion", "Firmer skin"],
+      "preparation": "Discontinue retinoids 3 days before. Avoid sun exposure.",
+      "contraindications": ["Pregnancy", "Active skin conditions", "Recent laser treatments"]
+    },
+    {
+      "id": "body-001",
+      "category": "Body Treatments",
+      "title": "Full Body Scrub",
+      "description": "Exfoliating treatment that removes dead skin cells and leaves skin smooth and radiant.",
+      "duration": "45 minutes",
+      "price": "$80-120",
+      "benefits": ["Smooth skin", "Improved texture", "Enhanced circulation", "Stress relief"],
+      "preparation": "Avoid shaving 24 hours before. Shower without oils or lotions.",
+      "contraindications": ["Sunburn", "Open wounds", "Severe skin conditions"]
+    },
+    {
+      "id": "body-002",
+      "category": "Body Treatments",
+      "title": "Detox Body Wrap",
+      "description": "Purifying treatment that helps eliminate toxins and reduce bloating while nourishing the skin.",
+      "duration": "60 minutes",
+      "price": "$120-160",
+      "benefits": ["Detoxification", "Skin tightening", "Improved circulation", "Relaxation"],
+      "preparation": "Drink plenty of water. Avoid eating 2 hours before treatment.",
+      "contraindications": ["Pregnancy", "High blood pressure", "Claustrophobia"]
+    },
+    {
+      "id": "wellness-001",
+      "category": "Wellness Treatments",
+      "title": "Aromatherapy Session",
+      "description": "Therapeutic use of essential oils to promote physical and emotional well-being through inhalation and topical application.",
+      "duration": "30-45 minutes",
+      "price": "$60-90",
+      "benefits": ["Stress reduction", "Mood enhancement", "Better sleep", "Mental clarity"],
+      "preparation": "Inform therapist of any allergies. Avoid strong fragrances before treatment.",
+      "contraindications": ["Severe allergies", "Asthma", "Pregnancy (certain oils)"]
+    },
+    {
+      "id": "wellness-002",
+      "category": "Wellness Treatments",
+      "title": "Meditation and Mindfulness Session",
+      "description": "Guided meditation and mindfulness practice to promote mental well-being and stress reduction.",
+      "duration": "45 minutes",
+      "price": "$70-100",
+      "benefits": ["Stress reduction", "Mental clarity", "Improved focus", "Emotional balance"],
+      "preparation": "Wear comfortable clothing. Arrive with an open mind.",
+      "contraindications": ["Severe mental health conditions (consult doctor first)"]
+    }
+  ],
+  "spa_policies": [
+    {
+      "id": "policy-001",
+      "category": "Booking and Cancellation",
+      "title": "Booking Policy",
+      "content": "All appointments must be booked at least 24 hours in advance. We require a valid credit card to secure your reservation. Same-day bookings are subject to availability."
+    },
+    {
+      "id": "policy-002",
+      "category": "Booking and Cancellation",
+      "title": "Cancellation Policy",
+      "content": "Cancellations must be made at least 24 hours before your appointment to avoid a 50% cancellation fee. No-shows will be charged the full treatment price."
+    },
+    {
+      "id": "policy-003",
+      "category": "Booking and Cancellation",
+      "title": "Rescheduling Policy",
+      "content": "Appointments can be rescheduled up to 12 hours before the scheduled time. Same-day rescheduling is subject to availability and may incur additional fees."
+    },
+    {
+      "id": "policy-004",
+      "category": "Spa Etiquette",
+      "title": "Arrival Time",
+      "content": "Please arrive 15 minutes before your scheduled appointment for check-in and preparation. Late arrivals may result in shortened treatment time."
+    },
+    {
+      "id": "policy-005",
+      "category": "Spa Etiquette",
+      "title": "Dress Code",
+      "content": "Comfortable, loose-fitting clothing is recommended. We provide robes and slippers for your comfort. Please remove jewelry before treatments."
+    },
+    {
+      "id": "policy-006",
+      "category": "Health and Safety",
+      "title": "Health Conditions",
+      "content": "Please inform us of any health conditions, allergies, or medications before your treatment. Some treatments may not be suitable for certain conditions."
+    },
+    {
+      "id": "policy-007",
+      "category": "Health and Safety",
+      "title": "Pregnancy Policy",
+      "content": "We offer specialized treatments for pregnant guests. Please inform us of your pregnancy when booking. Some treatments are not recommended during pregnancy."
+    }
+  ],
+  "spa_facilities": [
+    {
+      "id": "facility-001",
+      "category": "Relaxation Areas",
+      "title": "Zen Garden",
+      "description": "Peaceful outdoor space with meditation areas, water features, and comfortable seating for pre and post-treatment relaxation."
+    },
+    {
+      "id": "facility-002",
+      "category": "Relaxation Areas",
+      "title": "Quiet Lounge",
+      "description": "Indoor relaxation space with comfortable seating, soft lighting, and calming music. Complimentary herbal teas available."
+    },
+    {
+      "id": "facility-003",
+      "category": "Wellness Facilities",
+      "title": "Steam Room",
+      "description": "Traditional steam room for detoxification and relaxation. Helps open pores and improve circulation."
+    },
+    {
+      "id": "facility-004",
+      "category": "Wellness Facilities",
+      "title": "Sauna",
+      "description": "Dry heat sauna for muscle relaxation and stress relief. Temperature controlled for optimal comfort."
+    },
+    {
+      "id": "facility-005",
+      "category": "Wellness Facilities",
+      "title": "Vitality Pool",
+      "description": "Heated pool with jets for hydrotherapy and muscle relaxation. Perfect for post-treatment recovery."
+    }
+  ],
+  "spa_packages": [
+    {
+      "id": "package-001",
+      "category": "Spa Packages",
+      "title": "Relaxation Retreat",
+      "description": "Complete relaxation package including Swedish massage, hydrating facial, and access to wellness facilities.",
+      "duration": "3 hours",
+      "price": "$280-350",
+      "includes": ["60-minute Swedish massage", "60-minute hydrating facial", "Steam room and sauna access", "Healthy lunch", "Herbal tea service"]
+    },
+    {
+      "id": "package-002",
+      "category": "Spa Packages",
+      "title": "Couples Retreat",
+      "description": "Romantic spa experience for two including side-by-side treatments and private relaxation time.",
+      "duration": "2.5 hours",
+      "price": "$450-600",
+      "includes": ["Couples massage (60 minutes)", "Champagne service", "Private relaxation suite", "Chocolate-covered strawberries"]
+    },
+    {
+      "id": "package-003",
+      "category": "Spa Packages",
+      "title": "Detox and Renewal",
+      "description": "Comprehensive detox program combining body treatments, wellness facilities, and nutrition guidance.",
+      "duration": "4 hours",
+      "price": "$350-450",
+      "includes": ["Body scrub", "Detox wrap", "Lymphatic drainage massage", "Nutrition consultation", "Detox juice"]
+    }
+  ],
+  "frequently_asked_questions": [
+    {
+      "id": "faq-001",
+      "category": "General Questions",
+      "question": "What should I wear to my spa appointment?",
+      "answer": "Wear comfortable, loose-fitting clothing. We provide robes, slippers, and disposable undergarments for your comfort. Please remove jewelry before treatments."
+    },
+    {
+      "id": "faq-002",
+      "category": "General Questions",
+      "question": "How early should I arrive for my appointment?",
+      "answer": "Please arrive 15 minutes before your scheduled appointment time. This allows time for check-in, consultation, and preparation."
+    },
+    {
+      "id": "faq-003",
+      "category": "Booking Questions",
+      "question": "Can I book same-day appointments?",
+      "answer": "Same-day bookings are subject to availability. We recommend booking at least 24 hours in advance to ensure your preferred time slot."
+    },
+    {
+      "id": "faq-004",
+      "category": "Booking Questions",
+      "question": "What is your cancellation policy?",
+      "answer": "Cancellations must be made at least 24 hours before your appointment to avoid a 50% cancellation fee. No-shows will be charged the full treatment price."
+    },
+    {
+      "id": "faq-005",
+      "category": "Treatment Questions",
+      "question": "Are treatments suitable during pregnancy?",
+      "answer": "We offer specialized treatments for pregnant guests. Please inform us of your pregnancy when booking as some treatments are not recommended during pregnancy."
+    },
+    {
+      "id": "faq-006",
+      "category": "Treatment Questions",
+      "question": "What if I have allergies or health conditions?",
+      "answer": "Please inform us of any health conditions, allergies, or medications when booking. Our therapists will customize treatments to ensure your safety and comfort."
+    },
+    {
+      "id": "faq-007",
+      "category": "Facilities Questions",
+      "question": "What wellness facilities are available?",
+      "answer": "We offer a steam room, sauna, vitality pool, zen garden, and quiet lounge. Access to facilities can be booked separately or included in treatment packages."
+    },
+    {
+      "id": "faq-008",
+      "category": "Facilities Questions",
+      "question": "Do you provide refreshments?",
+      "answer": "Complimentary herbal teas are available in our relaxation areas. Fresh fruit water is also provided. Full meal service is available with advance notice."
+    }
+  ],
+  "spa_tips_and_advice": [
+    {
+      "id": "tip-001",
+      "category": "Pre-Treatment Tips",
+      "title": "Hydration is Key",
+      "content": "Drink plenty of water before and after your treatments. Proper hydration enhances the benefits of spa treatments and helps eliminate toxins."
+    },
+    {
+      "id": "tip-002",
+      "category": "Pre-Treatment Tips",
+      "title": "Avoid Heavy Meals",
+      "content": "Avoid eating heavy meals 2 hours before your treatment. Light snacks are fine, but heavy meals can cause discomfort during treatments."
+    },
+    {
+      "id": "tip-003",
+      "category": "Post-Treatment Tips",
+      "title": "Take It Easy",
+      "content": "Plan to relax after your treatment. Avoid strenuous activities and give your body time to fully absorb the benefits of your spa experience."
+    },
+    {
+      "id": "tip-004",
+      "category": "Post-Treatment Tips",
+      "title": "Continue Hydrating",
+      "content": "Continue drinking water after your treatment to help flush out toxins and maintain the benefits of your spa experience."
+    },
+    {
+      "id": "tip-005",
+      "category": "General Wellness Tips",
+      "title": "Regular Self-Care",
+      "content": "Regular spa treatments can be part of a healthy lifestyle. Consider monthly treatments to maintain stress levels and overall well-being."
+    },
+    {
+      "id": "tip-006",
+      "category": "General Wellness Tips",
+      "title": "Communicate Your Needs",
+      "content": "Always communicate with your therapist about pressure, temperature, and any discomfort. Treatments should be enjoyable and relaxing."
+    }
+  ]
+}
