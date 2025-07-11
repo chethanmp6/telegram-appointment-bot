@@ -4,7 +4,7 @@ set -e
 
 # Configuration
 RESOURCE_GROUP="appointment-bot-rg"
-LOCATION="East US"
+LOCATION="Central India"
 CONTAINER_REGISTRY="appointmentbotacr"
 IMAGE_NAME="appointment-bot"
 IMAGE_TAG="latest"

@@ -12,7 +12,7 @@ Since Azure doesn't have a managed Neo4j service, we'll use Neo4j AuraDB (manage
 4. Choose "AuraDB Free" (for development) or "AuraDB Professional" (for production)
 5. Configure:
    - Database name: `appointment-bot-graph`
-   - Region: Choose closest to your Azure region (East US recommended)
+   - Region: Choose closest to your Azure region (Central India recommended)
    - Initial password: Generate a strong password
 
 ### 2. Configure Connection

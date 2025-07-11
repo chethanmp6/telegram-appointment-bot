@@ -96,7 +96,7 @@ chmod +x azure/deploy.sh
 #### Option B: Manual Deployment
 ```bash
 # Create resource group
-az group create --name appointment-bot-rg --location "East US"
+az group create --name appointment-bot-rg --location "Central India"
 
 # Deploy infrastructure
 az deployment group create \

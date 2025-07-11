@@ -96,7 +96,7 @@ class Service(Base):
     price: Mapped[float] = mapped_column(Float, nullable=False)
     category: Mapped[str] = mapped_column(String(50), nullable=False)
     requirements: Mapped[list] = mapped_column(JSONB, default=list)
-    metadata: Mapped[Dict[str, Any]] = mapped_column(JSONB, default=dict)
+    service_metadata: Mapped[Dict[str, Any]] = mapped_column(JSONB, default=dict)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -148,7 +148,7 @@ class KnowledgeBase(Base):
     document_type: Mapped[str] = mapped_column(String(50), nullable=False)  # policy, faq, service_info, etc.
     category: Mapped[str] = mapped_column(String(100), nullable=False)
     tags: Mapped[list] = mapped_column(JSONB, default=list)
-    metadata: Mapped[Dict[str, Any]] = mapped_column(JSONB, default=dict)
+    service_metadata: Mapped[Dict[str, Any]] = mapped_column(JSONB, default=dict)
     embedding_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
