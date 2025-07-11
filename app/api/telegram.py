@@ -13,16 +13,17 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-async def get_telegram_service() -> TelegramService:
+async def get_telegram_service(request: Request) -> TelegramService:
     """Dependency to get Telegram service from app state."""
-    # This would be injected from the main app
-    # For now, return a placeholder
+    if hasattr(request.app.state, 'telegram_service'):
+        return request.app.state.telegram_service
     raise HTTPException(status_code=503, detail="Telegram service not available")
 
 
 @router.post("/webhook")
 async def telegram_webhook(
     update_data: Dict[str, Any],
+    request: Request,
     telegram_service: TelegramService = Depends(get_telegram_service)
 ):
     """Handle Telegram webhook updates."""
@@ -38,6 +39,7 @@ async def telegram_webhook(
 async def send_message(
     chat_id: int,
     message: str,
+    request: Request,
     telegram_service: TelegramService = Depends(get_telegram_service)
 ):
     """Send a message via Telegram bot."""
@@ -54,6 +56,7 @@ async def send_message(
 
 @router.get("/webhook_info")
 async def get_webhook_info(
+    request: Request,
     telegram_service: TelegramService = Depends(get_telegram_service)
 ):
     """Get webhook information."""
@@ -79,6 +82,7 @@ async def get_webhook_info(
 @router.post("/set_webhook")
 async def set_webhook(
     webhook_url: str,
+    request: Request,
     telegram_service: TelegramService = Depends(get_telegram_service)
 ):
     """Set Telegram webhook URL."""
@@ -95,6 +99,7 @@ async def set_webhook(
 
 @router.delete("/webhook")
 async def delete_webhook(
+    request: Request,
     telegram_service: TelegramService = Depends(get_telegram_service)
 ):
     """Delete Telegram webhook."""
@@ -111,6 +116,7 @@ async def delete_webhook(
 
 @router.get("/bot_info")
 async def get_bot_info(
+    request: Request,
     telegram_service: TelegramService = Depends(get_telegram_service)
 ):
     """Get bot information."""
